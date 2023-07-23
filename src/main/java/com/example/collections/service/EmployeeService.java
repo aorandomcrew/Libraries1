@@ -1,9 +1,11 @@
 package com.example.collections.service;
 
+import com.example.collections.exception.BadStringExeption;
 import com.example.collections.exception.EmployeeAlreadyAddedException;
 import com.example.collections.exception.EmployeeNotFoundException;
 import com.example.collections.exception.EmployeeStorageIsFullException;
 import com.example.collections.model.Employee;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,7 +13,7 @@ import java.util.*;
 @Service
 public class EmployeeService {
     private final Map<String, Employee> employees = new HashMap<>(MAX_SIZE);
-    private static final int MAX_SIZE = 5;
+    private static final int MAX_SIZE = 7;
 
     public EmployeeService() {
         Employee employee1 = new Employee("Danil", "Bogomolov", 1, getScale());
@@ -27,6 +29,12 @@ public class EmployeeService {
     }
 
     public Employee add(String firstName, String lastName, int department, double salary) {
+        if (!StringUtils.isAlpha(firstName) || !StringUtils.isAlpha(lastName)) {
+            throw new BadStringExeption();
+        } else {
+            StringUtils.capitalize(firstName.toLowerCase());
+            StringUtils.capitalize(lastName.toLowerCase());
+        }
         if (employees.size() >= MAX_SIZE) {
             throw new EmployeeStorageIsFullException();
         }
